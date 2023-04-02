@@ -14,31 +14,29 @@ def read_queries():
 def write_responses(result):
     print('\n'.join(result))
 
+def add_contact(contacts, query):
+    contacts[query.number] = query.name
+
+def remove_contact(contacts, query):
+    contacts.pop(query.number, None)
+
+def find_contact(contacts, query):
+    if query.number in contacts:
+        return contacts[query.number]
+    else:
+        return 'not found'
+
 def process_queries(queries):
     result = []
-    # Keep list of all existing (i.e. not deleted yet) contacts.
-    contacts = []
-    for cur_query in queries:
-        if cur_query.type == 'add':
-            # if we already have contact with such number,
-            # we should rewrite contact's name
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    contact.name = cur_query.name
-                    break
-            else: # otherwise, just add it
-                contacts.append(cur_query)
-        elif cur_query.type == 'del':
-            for j in range(len(contacts)):
-                if contacts[j].number == cur_query.number:
-                    contacts.pop(j)
-                    break
+    # Keep dictionary of all existing contacts with phone number as key.
+    contacts = {}
+    for query in queries:
+        if query.type == 'add':
+            add_contact(contacts, query)
+        elif query.type == 'del':
+            remove_contact(contacts, query)
         else:
-            response = 'not found'
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    response = contact.name
-                    break
+            response = find_contact(contacts, query)
             result.append(response)
     return result
 
