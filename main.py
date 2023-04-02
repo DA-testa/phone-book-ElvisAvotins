@@ -14,17 +14,26 @@ def read_queries():
 def write_responses(result):
     print('\n'.join(result))
 
+def add_contact(contacts, query):
+    contacts[query.number] = query.name
+
+def delete_contact(contacts, query):
+    contacts.pop(query.number, None)
+
+def find_contact(contacts, query):
+    response = contacts.get(query.number, 'not found')
+    return response
+
 def process_queries(queries):
     result = []
-    # Keep dictionary of all existing contacts with phone number as key.
     contacts = {}
     for cur_query in queries:
         if cur_query.type == 'add':
-            contacts[cur_query.number] = cur_query.name
+            add_contact(contacts, cur_query)
         elif cur_query.type == 'del':
-            contacts.pop(cur_query.number, None)
+            delete_contact(contacts, cur_query)
         else:
-            response = contacts.get(cur_query.number, 'not found')
+            response = find_contact(contacts, cur_query)
             result.append(response)
     return result
 
